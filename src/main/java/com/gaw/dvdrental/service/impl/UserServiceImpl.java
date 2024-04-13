@@ -1,62 +1,71 @@
 package com.gaw.dvdrental.service.impl;
 
-import com.gaw.dvdrental.dto.UserRegistrationDto;
-import com.gaw.dvdrental.entity.Role;
-import com.gaw.dvdrental.entity.User;
+import com.gaw.dvdrental.model.dto.UserDto;
+import com.gaw.dvdrental.model.entity.Role;
+import com.gaw.dvdrental.model.entity.User;
+import com.gaw.dvdrental.repository.RoleRepository;
 import com.gaw.dvdrental.repository.UserRepository;
 import com.gaw.dvdrental.service.UserService;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
-
     private UserRepository userRepository;
-    private BCryptPasswordEncoder passwordEncoder;
+    private RoleRepository roleRepository;
+    private PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
-        super();
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
-    public User save(UserRegistrationDto registrationDto) {
-        var user = new User(registrationDto.getFirstName(),
-                registrationDto.getLastName(),
-                registrationDto.getEmail(),
-                passwordEncoder.encode(registrationDto.getPassword()),
-                Arrays.asList(new Role("ROLE_ADMIN")));
-        return userRepository.save(user);
-    }
+    public void saveUser(UserDto userDto) {
+        User user = new User();
+        user.setName(userDto.getFirstName() + " " + userDto.getLastName());
+        user.setEmail(userDto.getEmail());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
-    @Override
-    public List<User> getAll() {
-        return userRepository.findAll();
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var user = userRepository.findByEmail(username);
-        if (user == null){
-            throw new UsernameNotFoundException("Invalid username or password.");
+        Role role = roleRepository.findByName("ROLE_ADMIN");
+        if (role == null){
+            role = checkRoleExist();
         }
-        return new org.springframework.security.core.userdetails
-                .User(user.getFirstName(), user.getPassword(), mapRolesToAuthorities(user.getRoles()));
+        user.setRoles(Set.of(role));
+        userRepository.save(user);
     }
 
-    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles){
-        return roles.stream().map( role ->
-           new SimpleGrantedAuthority(role.getName())
-        ).collect(Collectors.toList());
+    private Role checkRoleExist() {
+        Role role = new Role();
+        role.setName("ROLE_ADMIN");
+        return roleRepository.save(role);
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public List<UserDto> findAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map( (user) -> mapToUserDto(user))
+                .collect(Collectors.toList());
+    }
+
+    private UserDto mapToUserDto(User user){
+        UserDto userDto = new UserDto();
+        String[] str = user.getName().split(" ");
+        userDto.setFirstName(str[0]);
+        userDto.setLastName(str[1]);
+        userDto.setEmail(user.getEmail());
+        return userDto;
     }
 }

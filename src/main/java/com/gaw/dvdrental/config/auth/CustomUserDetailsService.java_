@@ -1,0 +1,48 @@
+package com.gaw.dvdrental.config.auth;
+
+import com.gaw.dvdrental.model.entity.Role;
+import com.gaw.dvdrental.model.entity.User;
+import com.gaw.dvdrental.repository.UserRepository;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import java.util.Collection;
+import java.util.stream.Collectors;
+
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
+
+    private UserRepository userRepository;
+
+    public CustomUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        System.out.printf("### loadUserByUsername(%s)%n", email);
+        User user = userRepository.findByEmail(email);
+
+        if (user != null) {
+            System.out.println(user.getEmail() + " | " + user.getPassword());
+            user.getRoles().forEach( role -> {
+                System.out.println(role.getId() + " # " + role.getName());
+            });
+            return new org.springframework.security.core.userdetails.User(user.getEmail(),
+                    user.getPassword(),
+                    mapRolesToAuthorities(user.getRoles()));
+        } else {
+            throw new UsernameNotFoundException("Invalid username or password.");
+        }
+    }
+
+    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles){
+        return roles.stream().map( role ->
+                new SimpleGrantedAuthority(role.getName())
+        ).collect(Collectors.toList());
+    }
+}
