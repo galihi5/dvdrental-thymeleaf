@@ -24,7 +24,7 @@ public class MyCustomAuthenticationSuccessHandler implements AuthenticationSucce
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        System.out.println("### onAuthenticationSuccess");
+        System.out.println(">>>> onAuthenticationSuccess");
         handle(request, response, authentication);
         clearAuthenticationAttributes(request);
     }
@@ -41,10 +41,12 @@ public class MyCustomAuthenticationSuccessHandler implements AuthenticationSucce
         redirectStrategy.sendRedirect(request, response, targetUrl);
     }
 
-    protected String determineTargetUrl(final Authentication authentication) {
+    public static String determineTargetUrl(final Authentication authentication) {
         Map<String, String> roleTargetUrlMap = new HashMap<>();
-        roleTargetUrlMap.put("ROLE_USER", "/user/users");
-        roleTargetUrlMap.put("ROLE_ADMIN", "/admin/users");
+//        roleTargetUrlMap.put("ROLE_USER", "/user/users");
+//        roleTargetUrlMap.put("ROLE_ADMIN", "/admin/users");
+        roleTargetUrlMap.put("ROLE_USER", "/index");
+        roleTargetUrlMap.put("ROLE_ADMIN", "/index");
 
         final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         for (final GrantedAuthority grantedAuthority : authorities) {

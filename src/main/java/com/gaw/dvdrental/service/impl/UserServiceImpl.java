@@ -6,16 +6,20 @@ import com.gaw.dvdrental.model.entity.User;
 import com.gaw.dvdrental.repository.RoleRepository;
 import com.gaw.dvdrental.repository.UserRepository;
 import com.gaw.dvdrental.service.UserService;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
+
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
+    @Autowired
+    private ModelMapper modelMapper;
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
@@ -27,14 +31,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void saveUser(UserDto userDto) {
-        User user = new User();
-        user.setName(userDto.getFirstName() + " " + userDto.getLastName());
-        user.setEmail(userDto.getEmail());
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+    public void saveUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         Role role = roleRepository.findByName("ROLE_ADMIN");
-        if (role == null){
+        if (role == null) {
             role = checkRoleExist();
         }
         user.setRoles(Set.of(role));
@@ -49,23 +50,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email);
+        return userRepository.findByEmailIgnoreCase(email);
     }
 
     @Override
     public List<UserDto> findAllUsers() {
-        List<User> users = userRepository.findAll();
-        return users.stream()
-                .map( (user) -> mapToUserDto(user))
-                .collect(Collectors.toList());
+        return userRepository.findAll().stream().map(this::mapToUserDto).collect(Collectors.toList());
     }
 
     private UserDto mapToUserDto(User user){
-        UserDto userDto = new UserDto();
-        String[] str = user.getName().split(" ");
-        userDto.setFirstName(str[0]);
-        userDto.setLastName(str[1]);
-        userDto.setEmail(user.getEmail());
-        return userDto;
+        return modelMapper.map(user, UserDto.class);
     }
+
 }

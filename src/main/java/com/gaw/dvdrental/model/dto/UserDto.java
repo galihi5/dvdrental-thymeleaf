@@ -1,5 +1,6 @@
 package com.gaw.dvdrental.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -12,11 +13,8 @@ import lombok.NoArgsConstructor;
 public class UserDto {
     private long id;
 
-    @NotEmpty
-    private String firstName;
-
-    @NotEmpty
-    private String lastName;
+    @NotEmpty(message = "Name should not be empty")
+    private String name;
 
     @NotEmpty(message = "Email should not be empty")
     @Email

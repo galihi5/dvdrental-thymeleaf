@@ -41,23 +41,15 @@
                 <div class="card-body">
                     <form method="post" role="form" th:action="@{/register/save}" th:object="${user}" >
                         <div class="form-group mb-3">
-                            <label class="form-label">First Name</label>
-                            <input class="form-control" id="firstName" name="firstName" placeholder="Enter first name" th:field="*{firstName}" type="text" />
-                            <p th:errors = "*{firstName}" class="text-danger" th:if="${#fields.hasErrors('firstName')}"></p>
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label class="form-label">Last Name</label>
-                            <input class="form-control" id="lastName" name="lastName" placeholder="Enter last name" th:field="*{lastName}" type="text" />
-                            <p th:errors = "*{lastName}" class="text-danger"
-                               th:if="${#fields.hasErrors('lastName')}"></p>
+                            <label class="form-label">Name</label>
+                            <input class="form-control" id="name" name="name" placeholder="Enter name" th:field="*{name}" type="text" />
+                            <p th:errors = "*{name}" class="text-danger" th:if="${#fields.hasErrors('name')}"></p>
                         </div>
 
                         <div class="form-group mb-3">
                             <label class="form-label">Email</label>
                             <input class="form-control" id="email" name="email" placeholder="Enter email address" th:field="*{email}" type="email" />
-                            <p th:errors = "*{email}" class="text-danger"
-                               th:if="${#fields.hasErrors('email')}"></p>
+                            <p th:errors = "*{email}" class="text-danger" th:if="${#fields.hasErrors('email')}"></p>
                         </div>
 
                         <div class="form-group mb-3">

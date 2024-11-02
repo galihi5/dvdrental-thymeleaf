@@ -1,15 +1,19 @@
 package com.gaw.dvdrental.controller;
 
-import com.gaw.dvdrental.model.dto.UserDto;
+
 import com.gaw.dvdrental.service.UserService;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.List;
 
 @Controller
 public class UserController {
+
+    @Autowired
+    ModelMapper modelMapper;
 
     private UserService userService;
 
@@ -20,16 +24,16 @@ public class UserController {
     @GetMapping("/admin/users")
     public String usersAdmin(Model model){
         System.out.println("users~Admin");
-        List<UserDto> users = userService.findAllUsers();
-        model.addAttribute("users", users);
+
+        model.addAttribute("users", userService.findAllUsers());
         return "users";
     }
 
     @GetMapping("/user/users")
     public String usersUser(Model model){
         System.out.println("users~User");
-        List<UserDto> users = userService.findAllUsers();
-        model.addAttribute("users", users);
+
+        model.addAttribute("users", userService.findAllUsers());
         return "users";
     }
 }

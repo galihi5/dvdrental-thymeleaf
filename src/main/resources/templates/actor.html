@@ -24,31 +24,35 @@
             </div>
         </div>
     </nav>
-    <br /><br />
     <div class="container">
-        <div class="row">
-            <h1 class="text-center">Welcome to <span th:text="${appName}">Our App</span></h1>
-        </div>
-        <hr />
         <div class="row col-md-10">
-            <h3>List of Menu</h3>
+            <h2>List of Actors</h2>
         </div>
         <table class="table table-bordered table-hover">
             <thead class="table-dark">
             <tr>
-                <th>Name</th>
-                <th>Path</th>
-                <th>link</th>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Last Update</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each = "menu : ${menus}">
-                <td th:text = "${menu.name}"></td>
-                <td th:text = "${menu.path}"></td>
-                <td><a th:text = "${menu.name}" th:href="@{${menu.path}}">view</a></td>
+            <tr th:each = "actor : ${actors}">
+                <td th:text = "${actor.actorId}"></td>
+                <td th:text = "${actor.firstName}"></td>
+                <td th:text = "${actor.lastName}"></td>
+                <td th:text = "${actor.lastUpdate}"></td>
             </tr>
             </tbody>
         </table>
+        <div class="row col-md-10">
+            <h4>Total Items: <span th:text="${totalItems}"></span></h4>
+            <h4>Total Pages: <span th:text="${totalPages}"></span></h4>
+            <br />
+            <h4>ctx.getVariables().get("totalItems")</h4>
+            <h4>ctx.getVariables().get("totalPages")</h4>
+        </div>
     </div>
 </body>
 </html>

@@ -26,10 +26,12 @@ public class SpringSecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/index").permitAll()
+//                        .requestMatchers("/index").permitAll()
                         .requestMatchers("/register/**").permitAll()
+                        .requestMatchers("/demo/**").permitAll()
                         .requestMatchers("/admin/**").hasAnyRole("ADMIN")
                         .requestMatchers("/user/**").hasAnyRole("USER","ADMIN")
+                        .requestMatchers("/index").hasAnyRole("USER","ADMIN")
                         .anyRequest().authenticated()
                 ).formLogin(
                         form -> form
@@ -44,6 +46,9 @@ public class SpringSecurityConfiguration {
                                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                                 .permitAll()
                                 .invalidateHttpSession(true)
+                ).sessionManagement(
+                        httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
+                                .invalidSessionUrl("/error")
                 );
         return http.build();
     }

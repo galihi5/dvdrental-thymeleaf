@@ -26,7 +26,7 @@ public class AtlassianCrowdAuthenticationManager implements AuthenticationManage
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        System.out.println("### AtlassianCrowdAuthenticationProvider authenticate");
+        System.out.print("### AtlassianCrowdAuthenticationProvider authenticate: ");
         String username = authentication.getPrincipal().toString();
         String password = authentication.getCredentials().toString();
         System.out.println(username + " | " + password);
@@ -43,7 +43,7 @@ public class AtlassianCrowdAuthenticationManager implements AuthenticationManage
             return null;
         }
         System.out.printf("### callAtlassianCrowdRestService(%s)%n", username);
-        com.gaw.dvdrental.model.entity.User user = userRepository.findByEmail(username);
+        com.gaw.dvdrental.model.entity.User user = userRepository.findByEmailIgnoreCase(username);
         user.getRoles().forEach( role -> {
             System.out.println(role.getId() + " # " + role.getName());
         });
