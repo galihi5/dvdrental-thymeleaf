@@ -8,15 +8,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class Utils {
 
-    @Autowired
-    ObjectMapper objectMapper;
+  @Autowired ObjectMapper objectMapper;
 
-    public <T> void printJson(T t) {
-        try {
-            System.out.println(">>>>> " + t.getClass().getName());
-            System.out.println(objectMapper.writeValueAsString(t));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+  public <T> void printJson(T t) {
+    try {
+      System.out.println(">>>>> " + t.getClass().getName());
+      System.out.println(objectMapper.writeValueAsString(t));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
     }
+  }
 }

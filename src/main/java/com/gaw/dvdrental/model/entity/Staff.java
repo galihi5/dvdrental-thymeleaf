@@ -1,4 +1,3 @@
 package com.gaw.dvdrental.model.entity;
 
-public class Staff {
-}
+public class Staff {}

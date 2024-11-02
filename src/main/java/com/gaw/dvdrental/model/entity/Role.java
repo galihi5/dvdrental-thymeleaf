@@ -1,10 +1,9 @@
 package com.gaw.dvdrental.model.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.util.HashSet;
 import java.util.Set;
+import lombok.*;
 
 @Entity
 @Getter
@@ -14,13 +13,13 @@ import java.util.Set;
 @Table(name = "roles")
 public class Role {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
 
-    @Column(nullable = false, unique = true)
-    private String name;
+  @Column(nullable = false, unique = true)
+  private String name;
 
-    @ManyToMany(mappedBy = "roles")
-    private Set<User> users = new HashSet<>();
+  @ManyToMany(mappedBy = "roles")
+  private Set<User> users = new HashSet<>();
 }
